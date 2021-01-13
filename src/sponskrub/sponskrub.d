@@ -41,11 +41,11 @@ int main(string[] args)
 			new ArgTemplate("chapter", true),
 			new ArgTemplate("h", true),
 			new ArgTemplate("exclude-sponsors", true),
-			new ArgTemplate("include-intros", true),
-			new ArgTemplate("include-outros", true),
-			new ArgTemplate("include-interactions", true),
-			new ArgTemplate("include-selfpromo", true),
-			new ArgTemplate("include-nonmusic", true),
+			new ArgTemplate("exclude-intros", true),
+			new ArgTemplate("exclude-outros", true),
+			new ArgTemplate("exclude-interactions", true),
+			new ArgTemplate("exclude-selfpromo", true),
+			new ArgTemplate("exclude-nonmusic", true),
 			new ArgTemplate("api-url", true, false, 1),
 		]);
 		
@@ -63,7 +63,7 @@ int main(string[] args)
 		
 	if ("h" in parsed_arguments.flag_arguments || parsed_arguments.unrecognised_arguments.length > 0 || parsed_arguments.get_missing_arguments().length > 0) {
 		writeln(
-"Usage: sponskrub [-h] [-chapter] [-exclude-sponsors] [-include-intros] [-include-outros] [-include-interactions] [-include-selfpromo] [-include-nonmusic] [-api-url url] video_id input_filename output_filename
+"Usage: sponskrub [-h] [-chapter] [-exclude-sponsors] [-exclude-intros] [-exclude-outros] [-exclude-interactions] [-exclude-selfpromo] [-exclude-nonmusic] [-api-url url] video_id input_filename output_filename
 
 SponSkrub is an application for removing sponsors from downloaded Youtube video
  files, it requires an internet connection in order to consult the SponsorBlock
@@ -80,21 +80,21 @@ Options:
  -exclude-sponsors
    Exclude sponsors from the categories to be cut or marked as chapters
 
- -include-intros
-   Cut or mark as chapters introductions (e.g: 'welcome to my video!')
+ -exclude-intros
+   Exclude introductions from the categories to be cut or marked as chapters
 
- -include-outros
-   Cut or mark as chapters outros (e.g: 'see you next week')
+ -exclude-outros
+   Exclude outros from the categories to be cut or marked as chapters
 
- -include-interactions
-   Cut or mark as chapters interactions (e.g: 'like this video if you liked it!')
+ -exclude-interactions
+   Exclude interactions from the categories to be cut or marked as chapters
  
- -include-selfpromo
-   Cut or mark as chapters self promotion (e.g: 'visit our merch store')
+ -exclude-selfpromo
+   Exclude self-promotion from the categories to be cut or marked as chapters
  
- -include-nonmusic
-   Cut or mark as chapters portions of music videos without music
-
+ -exclude-nonmusic
+   Exclude non-music portions of music videos from the categories to be cut or marked as chapters
+   
  -api-url
    Specify the url where the API is located, defaults to sponsor.ajay.app
 ");
@@ -191,19 +191,19 @@ Categories[] categories_from_arguments(Args arguments) {
 	if ("exclude-sponsors" !in arguments.flag_arguments) {
 		categories ~= Categories.Sponsor;
 	}
-	if ("include-intros" in arguments.flag_arguments) {
+	if ("exclude-intros" !in arguments.flag_arguments) {
 		categories ~= Categories.Intro;
 	}
-	if ("include-outros" in arguments.flag_arguments) {
+	if ("exclude-outros" !in arguments.flag_arguments) {
 		categories ~= Categories.Outro;
 	}
-	if ("include-interactions" in arguments.flag_arguments) {
+	if ("exclude-interactions" !in arguments.flag_arguments) {
 		categories ~= Categories.Interaction;
 	}
-	if ("include-selfpromo" in arguments.flag_arguments) {
+	if ("exclude-selfpromo" !in arguments.flag_arguments) {
 		categories ~= Categories.SelfPromo;
 	}
-	if ("include-nonmusic" in arguments.flag_arguments) {
+	if ("exclude-nonmusic" !in arguments.flag_arguments) {
 		categories ~= Categories.NonMusic;
 	}
 	
