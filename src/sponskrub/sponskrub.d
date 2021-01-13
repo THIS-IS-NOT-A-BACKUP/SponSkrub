@@ -63,40 +63,23 @@ int main(string[] args)
 		
 	if ("h" in parsed_arguments.flag_arguments || parsed_arguments.unrecognised_arguments.length > 0 || parsed_arguments.get_missing_arguments().length > 0) {
 		writeln(
-"Usage: sponskrub [-h] [-chapter] [-exclude-sponsors] [-exclude-intros] [-exclude-outros] [-exclude-interactions] [-exclude-selfpromo] [-exclude-nonmusic] [-api-url url] video_id input_filename output_filename
+"Usage: sponskrub [options] [--] video_id input_filename output_filename
 
-SponSkrub is an application for removing sponsors from downloaded Youtube video
- files, it requires an internet connection in order to consult the SponsorBlock
- database and ffmpeg must be installed.
+SponSkrub is a command line utility for removing sponsors from downloaded Youtube videos.
+It requires an internet connection in order to consult the SponsorBlock database and
+ffmpeg must be installed for modifying the video files.
 
 Options:
- -h
-   Display this help string
-
- -chapter
-	 Mark sponsor spots as chapters rather than removing them.
-	 Faster but leads to bigger file sizes
- 
- -exclude-sponsors
-   Exclude sponsors from the categories to be cut or marked as chapters
-
- -exclude-intros
-   Exclude introductions from the categories to be cut or marked as chapters
-
- -exclude-outros
-   Exclude outros from the categories to be cut or marked as chapters
-
- -exclude-interactions
-   Exclude interactions from the categories to be cut or marked as chapters
- 
- -exclude-selfpromo
-   Exclude self-promotion from the categories to be cut or marked as chapters
- 
- -exclude-nonmusic
-   Exclude non-music portions of music videos from the categories to be cut or marked as chapters
-   
- -api-url
-   Specify the url where the API is located, defaults to sponsor.ajay.app
+ -h                     Display help
+ -chapter               Mark sections as chapters rather than removing them
+ -exclude-sponsors      Do not remove sponsors
+ -exclude-intros        Do not remove introductions
+ -exclude-outros        Do not remove outros
+ -exclude-interactions  Do not remove interactions
+ -exclude-selfpromo     Do not remove self-promotion
+ -exclude-nonmusic      Do not remove non-music portions of music videos
+ -api-url               Specify the url where the API is located,
+                        defaults to sponsor.ajay.app
 ");
 		return 1;
 	}
