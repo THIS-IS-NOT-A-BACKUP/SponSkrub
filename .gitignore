@@ -22,6 +22,8 @@ youtube-dl-sponsorblock-test-*
 *.obj
 *.lst
 *.mp4
+*.mkv
+*.webm
 *.ffm
 
 *.sublime-*
