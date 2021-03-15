@@ -22,6 +22,8 @@ import std.math;
 import std.range;
 import std.array;
 import std.typecons;
+import std.datetime;
+import std.file;
 
 import core.sys.posix.signal;
 
@@ -46,7 +48,9 @@ int main(string[] args)
 			new ArgTemplate("exclude-interactions", true),
 			new ArgTemplate("exclude-selfpromo", true),
 			new ArgTemplate("exclude-nonmusic", true),
+			new ArgTemplate("no-id", true),
 			new ArgTemplate("api-url", true, false, 1),
+			new ArgTemplate("proxy", true, false, 1),
 		]);
 		
 	parsed_arguments.parse(args);
@@ -78,8 +82,11 @@ Options:
   -exclude-interactions  Do not remove interactions
   -exclude-selfpromo     Do not remove self-promotion
   -exclude-nonmusic      Do not remove non-music portions of music videos
-  -api-url               Specify the url where the API is located,
-                        defaults to sponsor.ajay.app
+  -proxy                 Route all trafic through this proxy
+  -no-id                 Searches for sponsor data by the partial hash of the
+                         video id instead of directly requesting it
+  -api-url               Specify the url where the API is located, defaults to
+                         sponsor.ajay.app
 ");
 		return 1;
 	}
@@ -90,6 +97,14 @@ Options:
 	} else {
 		api_url = "sponsor.ajay.app";
 	}
+	
+	string proxy;
+	if ("proxy" in parsed_arguments.flag_arguments) {
+		proxy = parsed_arguments.flag_arguments["proxy"].join;
+	} else {
+		proxy = "";
+	}
+	
 	auto video_id = parsed_arguments.positional_arguments[1];
 	auto input_filename = parsed_arguments.positional_arguments[2];
 	auto output_filename = parsed_arguments.positional_arguments[3];
@@ -109,7 +124,11 @@ Options:
 		return 4;
 	} else {
 		try {
-			sponsor_times = get_video_skip_times(video_id, categories, api_url);
+			if ("no-id" in parsed_arguments.flag_arguments) {
+				sponsor_times = get_video_skip_times_private(video_id, categories, api_url, proxy);
+			} else {
+				sponsor_times = get_video_skip_times_direct(video_id, categories, api_url, proxy);
+			}
 		}	catch (std.net.curl.HTTPStatusException e) {
 			if (e.status == 404) {
 				writeln("This video has no ad information available, either it has no ads or no one has logged any on SponsorBlock yet.");
@@ -119,7 +138,13 @@ Options:
 				return 6;
 			}
 		} catch (std.net.curl.CurlException e) {
-			writeln("Couldn't connect to the specified API url, try specifying a different one using the -api-url flag");
+			writeln("Couldn't connect to the Sponsorblock API");
+			if (proxy != "") {
+				writeln("Ensure your proxy is correctly configured");
+			}
+			if (api_url != "sponsor.ajay.app") {
+				writeln("Make sure the specified api url is correct");
+			}
 		}
 
 		if (sponsor_times.length > 0) {		
@@ -163,6 +188,8 @@ Options:
 			}
 			
 			if (ffmpeg_status) {
+				copy_file_modified_time(input_filename, output_filename);
+				
 				writeln("Done!");
 				return 0;
 			} else {
@@ -198,4 +225,10 @@ Categories[] categories_from_arguments(Args arguments) {
 	}
 	
 	return categories;
+}
+
+void copy_file_modified_time(string source, string destination) {
+	SysTime accessTime, modificationTime;
+	getTimes(source, accessTime, modificationTime);
+	setTimes(destination, accessTime, modificationTime);
 }

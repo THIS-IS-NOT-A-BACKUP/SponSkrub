@@ -34,6 +34,9 @@ You can build `sponskrub` by running `dub build`.
 -exclude-interactions  Do not remove interactions
 -exclude-selfpromo     Do not remove self-promotion
 -exclude-nonmusic      Do not remove non-music portions of music videos
--api-url               Specify the url where the API is located,
-                       defaults to sponsor.ajay.app
+-proxy                 Route all trafic through this proxy
+-no-id                 Searches for sponsor data by the partial hash of the
+                       video id instead of directly requesting it
+-api-url               Specify the url where the API is located, defaults to
+                       sponsor.ajay.app
 ```
