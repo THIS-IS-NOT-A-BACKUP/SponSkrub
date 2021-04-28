@@ -84,7 +84,7 @@ bool run_ffmpeg_filter(string input_filename, string output_filename, string fil
 	args = ["ffmpeg", "-loglevel", "warning", "-hide_banner", "-stats", "-i", input_filename];
 	
 	if (metadata != "") {
-		metadata_filename = prepend_random_prefix(6, "-metadata.ffm");
+		metadata_filename = generate_metadata_filename();
 		write_metadata(metadata_filename, metadata);
 		args ~= ["-i", metadata_filename, "-map_metadata", "0", "-map_chapters", "1"];
 	}
